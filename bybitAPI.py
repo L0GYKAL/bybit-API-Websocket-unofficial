@@ -30,7 +30,16 @@ class bybit(api_key: str, secret: str):
             return symbolInfo
     def getPriceInfo(symbol: str)
         symbolInfo = asyncio.get_event_loop().run_until_complete(fetchPrice(self, symbol))
-
+    def fetchKline(self, symbol):
+        expires = time.now()+1000
+        signature = signature(self, self.secret, 'GET/realtime' + expires)
+        async with websockets.connect(
+                'ws://stream.bybit.com/realtime') as websocket:
+            #auth
+            await websocket.send(str('{"op":"auth","args":[{' + api_key + '},expires,{' + signature + '}]}'))
+            await websocket.send('{"op":"subscribe","args":["kline.BTCUSD.1m"]}')
+            symbolInfo = await websocket.rcv()
+        
 if __name__ == "__main__":
     bybit = bybit(key, secret)
     price = bybit.getPriceInfo('BTCUSD')
