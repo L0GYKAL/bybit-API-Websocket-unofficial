@@ -32,8 +32,5 @@ class bybit(api_key: str, secret: str):
         symbolInfo = asyncio.get_event_loop().run_until_complete(fetchPrice(self, symbol))
 
 if __name__ == "__main__":
-    key = ''
-    secret = ''
-    symbol = 'BTCUSD'
     bybit = bybit(key, secret)
-    price = bybit.getPriceInfo(symbol)
+    price = bybit.getPriceInfo('BTCUSD')
